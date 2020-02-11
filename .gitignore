@@ -335,3 +335,5 @@ ASALocalRun/
 
 # VSCode garbage
 .vscode/
+
+yarn-error.log
