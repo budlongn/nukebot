@@ -1,6 +1,8 @@
 import {Client, Message} from 'discord.js'
 import commandHandler from './handlers/command'
+import {config} from 'dotenv'
 
+config()
 const client = new Client()
 const prefix = '!'
 
@@ -28,4 +30,4 @@ client.on('message', async (message: Message) => {
     return await commandHandler(command, args, message)
 })
 
-client.login('Njc2NjE0NTYxNzI5NjA5NzM4.XkLz1w.LqI8EXQDsgTR5xbbxSj_8kvJ3qk')
+client.login(process.env.DISCORD_TOKEN)
