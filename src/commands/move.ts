@@ -2,10 +2,10 @@ import {Collection, GuildMember, Message, Permissions, VoiceChannel} from "disco
 
 export default async (args: string[], message: Message) => {
     if (!message.member.hasPermission(Permissions.FLAGS.MOVE_MEMBERS)) {
-        return await message.reply(`I'm sorry ${message.member.displayName}, I'm afraid I can't let you do that`)
+        return await message.channel.send(`I'm sorry ${message.member.displayName}, I'm afraid I can't let you do that`)
     }
     if (args.length != 2) {
-        return await message.reply('Mention exactly TWO channels retard.')
+        return await message.channel.send('Mention exactly TWO channels retard.')
     }
 
     const fromChannel: VoiceChannel = message.guild.channels.find((x) => {
@@ -15,9 +15,14 @@ export default async (args: string[], message: Message) => {
         return x.type === 'voice' && x.name === args[1]
     }) as VoiceChannel
 
-    const users: Collection<string, GuildMember> = fromChannel.members
+    if (fromChannel && toChannel) {
+        const users: Collection<string, GuildMember> = fromChannel.members
 
-    users.forEach((user: GuildMember) => {
-        user.setVoiceChannel(toChannel.id)
-    })
+        users.forEach((user: GuildMember) => {
+            user.setVoiceChannel(toChannel.id)
+        })
+    } else {
+        return await message.channel.send('At least one of those channels doesn\'t exist')
+    }
+
 }
