@@ -336,3 +336,7 @@ ASALocalRun/
 
 # VSCode garbage
 .vscode/
+
+# Ignores compiled TypeScript files
+src/**/*.map
+src/**/*.js
