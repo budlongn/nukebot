@@ -1,4 +1,4 @@
-import {Message} from "discord.js"
+import {Message} from 'discord.js'
 import move from '../commands/move'
 
 export default async (command: string, args: string[], message: Message) => {

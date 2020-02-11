@@ -1,4 +1,4 @@
-import {Collection, GuildMember, Message, Permissions, VoiceChannel} from "discord.js"
+import {Collection, GuildMember, Message, Permissions, VoiceChannel} from 'discord.js'
 
 export default async (args: string[], message: Message) => {
     if (!message.member.hasPermission(Permissions.FLAGS.MOVE_MEMBERS)) {

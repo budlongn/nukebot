@@ -1,6 +1,7 @@
 import {Client, Message} from 'discord.js'
 import commandHandler from './handlers/command'
 import {config} from 'dotenv'
+import {parseArgs} from './helpers/parsing'
 
 config()
 const client = new Client()
@@ -22,9 +23,7 @@ client.on('message', async (message: Message) => {
     if (!message.guild) return
     if (!message.content.startsWith(prefix)) return
 
-    const args: string[] = message.content.slice(prefix.length).trim().match(/[^\s"']+|"([^"]*)"|'([^']*)'/g).map((arg) => {
-        return arg.replace(/['"]/g, '')
-    })
+    const args: string[] = parseArgs(prefix, message.content)
     const command: string = args.shift().toLowerCase()
 
     return await commandHandler(command, args, message)
