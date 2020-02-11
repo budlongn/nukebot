@@ -6,6 +6,6 @@ export default async (command: string, args: string[], message: Message) => {
         case 'move':
             return await move(args, message)
         default:
-            return
+            return await message.channel.send('I have no idea what the FUCK you\'re talking about')
     }
 }
