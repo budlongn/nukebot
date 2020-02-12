@@ -31,12 +31,12 @@ steps:
     sshEndpoint: 'Nighthawk'
     sourceFolder: 'build'
     contents: 'index.js'
-    targetFolder: '/home/discord/DiscordBot'
+    targetFolder: $(TargetFolder)
 
 - task: SSH@0
   inputs:
     sshEndpoint: 'Nighthawk'
     runOptions: 'commands'
     commands: |
-      sudo chown discord /home/discord/DiscordBot/index.js
+      sudo chown discord $(TargetFolder)/index.js
       sudo systemctl restart discord-bot
