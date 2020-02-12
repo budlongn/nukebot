@@ -19,6 +19,8 @@ export default async (args: string[], message: Message) => {
     if (fromChannel && toChannel) {
         const users: Collection<string, GuildMember> = fromChannel.members
 
+        message.channel.send(`Helping ${fromChannel.members.size} clowns meander to ${toChannel.name}`)
+
         users.forEach((user: GuildMember) => {
             user.setVoiceChannel(toChannel.id)
         })
