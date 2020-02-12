@@ -22,12 +22,14 @@ steps:
 - script: |
     yarn install
     yarn build
+    pwd
+    ls
   displayName: 'Yarn install and build'
 
 - task: CopyFilesOverSSH@0
   inputs:
     sshEndpoint: 'Nighthawk'
-    sourceFolder: '$(Agent.BuildDirectory)/build'
+    sourceFolder: 'build'
     contents: 'index.js'
     targetFolder: '/home/discord/DiscordBot'
 
