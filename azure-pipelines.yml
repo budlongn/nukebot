@@ -22,6 +22,8 @@ steps:
 - script: |
     yarn install
     yarn build
+    pwd
+    ls
   displayName: 'Yarn install and build'
 
 - task: CopyFilesOverSSH@0
