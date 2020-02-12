@@ -24,5 +24,4 @@ export default async (args: string[], message: Message) => {
     } else {
         return await message.channel.send('At least one of those channels doesn\'t exist')
     }
-
 }
