@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "discord.js": "^11.5.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "dotenv-flow": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^13.7.1",
@@ -11,7 +12,7 @@
   "scripts": {
     "build": "yarn clean && tsc && webpack",
     "clean": "rm -rf build",
-    "start": "tsc && node src/index.js",
+    "start": "tsc && NODE_ENV=development node src/index.js",
     "start-prod": "yarn build && node build/index.js"
   }
 }
