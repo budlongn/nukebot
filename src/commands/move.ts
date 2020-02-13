@@ -1,6 +1,6 @@
 import {Collection, GuildMember, Message, Permissions, VoiceChannel} from 'discord.js'
 
-export default async (args: string[], message: Message) => {
+export async function move(args: string[], message: Message) {
     if (!message.member.hasPermission(Permissions.FLAGS.MOVE_MEMBERS)) {
         // return await message.channel.send(`I'm sorry ${message.member.displayName}, I'm afraid I can't let you do that`)
         return await message.channel.send(`Can you shut the fuck up for a second? I can't help you if you're a retard.`)

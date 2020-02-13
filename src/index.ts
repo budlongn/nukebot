@@ -1,5 +1,5 @@
 import {Client, Message} from 'discord.js'
-import commandHandler from './handlers/command'
+import {commandHandler} from './handlers/command'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 
