@@ -2,7 +2,6 @@ const path = require('path')
 
 module.exports = {
     mode: 'production',
-    devtool: 'source-map',
     entry: {
         server: './src/index.js'
     },
@@ -17,8 +16,5 @@ module.exports = {
                 exclude: /node_modules/
             }
         ]
-    },
-    optimization: {
-        minimize: false
     }
 }
