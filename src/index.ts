@@ -1,7 +1,7 @@
 import {Client, Message} from 'discord.js'
 import {commandHandler} from './handlers/command'
-import {parseArgs} from './helpers/parsing'
 import {config} from 'dotenv-flow'
+import {parseArgs} from './helpers/parsing'
 
 config()
 const client = new Client()
