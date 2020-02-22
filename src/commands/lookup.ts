@@ -1,6 +1,6 @@
 import {Message} from 'discord.js'
 import {getBlizzardClient} from "../config/config"
-import {Boss, Character, Class, Raid, Spec, Talents} from "../types/battlenet"
+import {Boss, Character, Class, Raid, Spec, Talents} from "../types/character.Types"
 import {find, get} from 'lodash'
 
 export async function lookup(args: string[], message: Message) {
