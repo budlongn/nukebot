@@ -1,33 +1,22 @@
 import {Message} from 'discord.js'
-import {getBlizzardClient, getRaiderIOClient} from "../config/config"
-import {Boss, Character, Class, Raid, Spec, Talents} from "../types/character.Types"
+import {Boss, Character, Class, Raid, Spec, Talents} from '../types/character.Types'
 import {find, get} from 'lodash'
 import {utc} from 'moment'
-import {DungeonRun, RaiderIOCharacterData} from "../types/raiderio.Types"
+import {DungeonRun, RaiderIOCharacterData} from '../types/raiderio.Types'
+import {getCharacter} from '../api/blizzard'
+import {getCharacterData} from '../api/raiderio'
 
 export async function lookup(args: string[], message: Message) {
-    const blizzardClient = await getBlizzardClient()
-    const raiderIOClient = await getRaiderIOClient()
-
-    const resp = await blizzardClient.wow.character(['progression', 'talents', 'items'], {
-        origin: 'us',
-        realm: args[0],
-        name: args[1]
-    })
-    const character: Character = resp.data
+    const character: Character = await getCharacter(['progression', 'talents', 'items'], args[0], args[1])
+    if (character.status === 'nok') {
+        return await message.channel.send(character.reason)
+    }
     const spec: Spec = find(character.talents, (x: Talents) => {
         return x.selected
     }).spec
-    const {data: raiderIOData} = await raiderIOClient.get('/api/v1/characters/profile', {
-        params: {
-            region: 'us',
-            realm: args[0],
-            name: args[1],
-            fields: 'mythic_plus_best_runs,mythic_plus_scores_by_season:current'
-        }
-    })
+    const raiderIOData: RaiderIOCharacterData = await getCharacterData(['mythic_plus_best_runs','mythic_plus_scores_by_season:current'], args[0], args[1])
 
-    await message.channel.send({
+    return await message.channel.send({
         embed: {
             author: {
                 name: `${character.name} - ${character.realm} | ${spec.name} ${Class[character.class]} | ${character.items.averageItemLevelEquipped} ilvl | ${character.items.neck.azeriteItem.azeriteLevel} HoA`,
