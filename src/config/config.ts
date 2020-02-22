@@ -1,6 +1,9 @@
 import * as Blizzard from 'blizzard.js'
+import axios, {AxiosInstance} from 'axios'
+
 
 let blizzardAPI
+let raiderIOAPI: AxiosInstance
 
 export async function getBlizzardClient() {
     if (!blizzardAPI) {
@@ -16,4 +19,13 @@ export async function getBlizzardClient() {
         blizzardAPI.defaults.token = authRequest.data.access_token
     }
     return blizzardAPI
+}
+
+export function getRaiderIOClient(): AxiosInstance {
+    if (!raiderIOAPI) {
+        raiderIOAPI = axios.create({
+            baseURL: 'https://raider.io'
+        })
+    }
+    return raiderIOAPI
 }
