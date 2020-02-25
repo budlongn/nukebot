@@ -16,17 +16,22 @@ async function getAuthToken(): Promise<string> {
 }
 
 export async function initializeBlizzardClient(): Promise<void> {
-    if (!apiClient) {
-        apiClient = axios.create({
-            baseURL: 'https://us.api.blizzard.com',
-            headers: {
-                Authorization: await getAuthToken()
-            },
-            timeout: 5000,
-        })
+    apiClient = axios.create({
+        baseURL: 'https://us.api.blizzard.com',
+        headers: {
+            Authorization: await getAuthToken()
+        },
+        timeout: 5000
+    })
 
-        apiClient.interceptors.response.use(null, async (error) => {
+    await createResponseInterceptor()
+}
+
+async function createResponseInterceptor(): Promise<void> {
+    const interceptor: number = apiClient.interceptors.response.use(null, async (error) => {
+        try {
             if (error.config && error.response && error.response.status === 401) {
+                apiClient.interceptors.response.eject(interceptor) //to avoid looping if somehow the token call returns 401
                 const token = await getAuthToken()
                 apiClient.defaults.headers = {
                     Authorization: token
@@ -36,10 +41,12 @@ export async function initializeBlizzardClient(): Promise<void> {
                 }
                 return apiClient.request(error.config)
             }
-
+        } catch {
             return Promise.reject(error)
-        })
-    }
+        } finally {
+            await createResponseInterceptor()
+        }
+    })
 }
 
 export async function getCharacter(fields: string[], realm: string, name: string): Promise<Character> {
