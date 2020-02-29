@@ -1,5 +1,5 @@
 import axios, {AxiosInstance} from 'axios'
-import {Character, Item, Raid} from "../types/character.Types"
+import {Character, CharacterMedia, Encounters, Item} from "../types/character.Types"
 
 let apiClient: AxiosInstance
 
@@ -77,7 +77,7 @@ export async function getCharacterEquipment(realm: string, name: string): Promis
     }
 }
 
-export async function getCharacterRaidProgress(realm: string, name: string): Promise<Raid[]> {
+export async function getCharacterRaidProgress(realm: string, name: string): Promise<Encounters[]> {
     try {
         const {data} = await apiClient.get(`/profile/wow/character/${realm}/${name}/encounters/raids`, {
             headers: {
@@ -85,6 +85,24 @@ export async function getCharacterRaidProgress(realm: string, name: string): Pro
             }
         })
         return data.expansions
+    } catch (e) {
+        const {data} = e.response
+        return data
+    }
+}
+
+export async function getCharacterMedia(realm: string, name: string): Promise<CharacterMedia> {
+    try {
+        const {data} = await apiClient.get(`/profile/wow/character/${realm}/${name}/character-media`, {
+            headers: {
+                'Battlenet-Namespace': 'profile-us'
+            }
+        })
+        return {
+            avatar_url: data.avatar_url,
+            bust_url: data.bust_url,
+            render_url: data.render_url
+        }
     } catch (e) {
         const {data} = e.response
         return data

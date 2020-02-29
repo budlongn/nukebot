@@ -11,10 +11,11 @@ export interface Character {
     level: number
     experience: number
     achievement_points: number
-    encounters: Raid[]
+    encounters: Encounters[]
     equipment: Item[]
     average_item_level: number
     equipped_item_level: number
+    media: CharacterMedia
 }
 
 export interface Race {
@@ -42,7 +43,7 @@ export interface LocalizedNames {
     zh_CN: string
 }
 
-export interface Raid {
+export interface Encounters {
     expansion: Expansion
     instances: Instance[]
 }
@@ -79,44 +80,6 @@ export interface Encounter {
     }
     completed_count: number
     last_kill_timestamp: number
-}
-
-export interface Boss {
-    id: number
-    name: string
-    lfrKills: number
-    lfrTimestamp: number
-    normalKills: number
-    normalTimestamp: number
-    heroicKills: number
-    heroicTimestamp: number
-    mythicKills: number
-    mythicTimestamp: number
-}
-
-export interface Talents {
-    selected: boolean
-    talents: Talent[]
-    spec: Spec
-}
-
-export interface Talent {
-    tier: number
-    column: number
-    spell: Spell
-    spec?: Spec
-    calcTalent: string
-    calcSpec: string
-}
-
-export interface Spell {
-    id: number
-    name: string
-    icon: string
-    description: string
-    range: string
-    castTime: string,
-    cooldown: string
 }
 
 export interface Spec {
@@ -241,28 +204,6 @@ export enum Expansions {
     BattleForAzeroth = 396
 }
 
-export interface Items {
-    averageItemLevel: number,
-    averageItemLevelEquipped: number,
-    head: Item
-    neck: Item
-    shoulder: Item
-    back: Item
-    chest: Item
-    tabard: Item
-    wrist: Item
-    hands: Item
-    waist: Item
-    legs: Item
-    feet: Item
-    finger1: Item
-    finger2: Item
-    trinket1: Item
-    trinket2: Item
-    mainHand: Item
-    offHand: Item
-}
-
 //TODO: Clean this up, holy hell
 export interface Item {
     item: {
@@ -357,23 +298,6 @@ export interface TypeNameObject {
     name: LocalizedNames
 }
 
-export interface TooltipParams {
-    transmogItem: number
-    timewalkerLevel: number
-    azeritePower0: number
-    azeritePower1: number
-    azeritePower2: number
-    azeritePower3: number
-    azeritePower4: number
-    azeritePowerLevel: number
-}
-
-export interface Appearance {
-    itemId: number
-    itemAppearanceModId: number
-    transmogItemAppearanceModId: number
-}
-
 export interface Stat {
     type: TypeNameObject
     value: number
@@ -388,10 +312,6 @@ export interface Stat {
     }
 }
 
-export interface AzeriteEmpoweredItem {
-    azeritePowers: AzeritePower[]
-}
-
 export interface AzeritePower {
     id: number
     tier: number
@@ -399,8 +319,8 @@ export interface AzeritePower {
     bonusListId: number
 }
 
-export interface AzeriteItem {
-    azeriteLevel: number
-    azeriteExperience: number
-    azeriteExperienceRemaining: number
+export interface CharacterMedia {
+    avatar_url: string
+    bust_url: string
+    render_url: string
 }
