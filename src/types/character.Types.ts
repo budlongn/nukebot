@@ -11,7 +11,10 @@ export interface Character {
     level: number
     experience: number
     achievement_points: number
-    raids: Raids
+    encounters: Raid[]
+    equipment: Item[]
+    average_item_level: number
+    equipped_item_level: number
 }
 
 export interface Race {
@@ -39,7 +42,7 @@ export interface LocalizedNames {
     zh_CN: string
 }
 
-export interface Raids {
+export interface Raid {
     expansion: Expansion
     instances: Instance[]
 }
@@ -271,12 +274,14 @@ export interface Item {
     bonus_list: number[]
     quality: TypeNameObject
     name: LocalizedNames
+    modified_appearance_id: number
     azerite_details: AzeriteDetails
     item_class: IdNameObject
     item_subclass: IdNameObject
     inventory_type: TypeNameObject
     binding: TypeNameObject
     unique_equipped: LocalizedNames
+    armor: Stat
     stats: Stat[]
     spells: {
         spell: IdNameObject
@@ -293,16 +298,32 @@ export interface Item {
         value: number
         display_string: LocalizedNames
     }
+    transmog: Transmog
+    durability: {
+        value: number
+        display_string: LocalizedNames
+    }
     is_subclass_hidden: boolean
 }
 
 export interface AzeriteDetails {
     percentage_to_next_level: number
     selected_essences: Essence[]
+    selected_powers: AzeritePower[]
     level: {
         value: number
         display_string: LocalizedNames
     }
+    selected_powers_string: LocalizedNames
+}
+
+export interface AzeritePower {
+    id: number
+    tier: number
+    spell_tooltip: {
+        spell: SpellTooltip
+    }
+    is_display_hidden: boolean
 }
 
 export interface Essence {
@@ -311,6 +332,12 @@ export interface Essence {
     main_spell_tooltip: SpellTooltip
     passive_spell_tooltip: SpellTooltip
     essence: IdNameObject
+}
+
+export interface Transmog {
+    item: IdNameObject
+    display_string: LocalizedNames
+    item_modified_appearance_id: number
 }
 
 export interface SpellTooltip {

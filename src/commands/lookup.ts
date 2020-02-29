@@ -1,5 +1,5 @@
 import {Message} from 'discord.js'
-import {Boss, Character, Class, Raid, Spec, Talents} from '../types/character.Types'
+import {Boss, Character, Class, Item, Raid, Spec, Talents} from '../types/character.Types'
 import {find, get} from 'lodash'
 import {utc} from 'moment'
 import {DungeonRun, RaiderIOCharacterData} from '../types/raiderio.Types'
@@ -7,19 +7,13 @@ import {getCharacter} from '../api/blizzard'
 import {getCharacterData} from '../api/raiderio'
 
 export async function lookup(args: string[], message: Message) {
-    const character: Character = await getCharacter(['progression', 'talents', 'items'], args[0], args[1])
-    if (character.status === 'nok') {
-        return await message.channel.send(character.reason)
-    }
-    const spec: Spec = find(character.talents, (x: Talents) => {
-        return x.selected
-    }).spec
+    const character: Character = await getCharacter(args[0], args[1])
     const raiderIOData: RaiderIOCharacterData = await getCharacterData(['mythic_plus_best_runs','mythic_plus_scores_by_season:current'], args[0], args[1])
 
     return await message.channel.send({
         embed: {
             author: {
-                name: `${character.name} - ${character.realm} | ${spec.name} ${Class[character.class]} | ${character.items.averageItemLevelEquipped} ilvl | ${character.items.neck.azeriteItem.azeriteLevel} HoA`,
+                name: `${character.name} - ${character.realm.name.en_US} | ${character.active_spec.name.en_US} ${character.character_class.name.en_US} | ${character.equipped_item_level} ilvl | ${getHeartOfAzerothLevel(character.equipment)} HoA`,
                 url: `https://worldofwarcraft.com/en-us/character/${args[0]}/${args[1]}`
             },
             thumbnail: {
@@ -30,7 +24,7 @@ export async function lookup(args: string[], message: Message) {
             fields: [
                 {
                     name: 'Raid Progress',
-                    value: buildRecentRaidList(character.progression.raids),
+                    value: buildRecentRaidList(character.encounters),
                     inline: true
                 },
                 {
@@ -77,4 +71,12 @@ function buildMythicPlusDungeonList(raiderIOData: RaiderIOCharacterData): string
     }
 
     return dataString
+}
+
+function getHeartOfAzerothLevel(items: Item[]) {
+    const hoa: Item = find(items, (x) => {
+        return x.slot.type === 'NECK'
+    })
+
+    return hoa.azerite_details.level.value
 }
