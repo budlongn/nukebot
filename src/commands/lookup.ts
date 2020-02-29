@@ -1,36 +1,33 @@
 import {Message} from 'discord.js'
-import {Boss, Character, Class, Raid, Spec, Talents} from '../types/character.Types'
-import {find, get} from 'lodash'
+import {Character, Encounters, Expansions, Item, Instance, Mode} from '../types/character.Types'
+import {find} from 'lodash'
 import {utc} from 'moment'
 import {DungeonRun, RaiderIOCharacterData} from '../types/raiderio.Types'
-import {getCharacter} from '../api/blizzard'
+import {getCharacter, getCharacterEquipment, getCharacterMedia, getCharacterRaidProgress} from '../api/blizzard'
 import {getCharacterData} from '../api/raiderio'
 
 export async function lookup(args: string[], message: Message) {
-    const character: Character = await getCharacter(['progression', 'talents', 'items'], args[0], args[1])
-    if (character.status === 'nok') {
-        return await message.channel.send(character.reason)
-    }
-    const spec: Spec = find(character.talents, (x: Talents) => {
-        return x.selected
-    }).spec
-    const raiderIOData: RaiderIOCharacterData = await getCharacterData(['mythic_plus_best_runs','mythic_plus_scores_by_season:current'], args[0], args[1])
+    const character: Character = await getCharacter(args[0], args[1])
+    character.encounters = await getCharacterRaidProgress(args[0], args[1])
+    character.equipment = await getCharacterEquipment(args[0], args[1])
+    character.media = await getCharacterMedia(args[0], args[1])
+    const raiderIOData: RaiderIOCharacterData = await getCharacterData(['mythic_plus_best_runs', 'mythic_plus_scores_by_season:current'], args[0], args[1])
 
     return await message.channel.send({
         embed: {
             author: {
-                name: `${character.name} - ${character.realm} | ${spec.name} ${Class[character.class]} | ${character.items.averageItemLevelEquipped} ilvl | ${character.items.neck.azeriteItem.azeriteLevel} HoA`,
+                name: `${character.name} - ${character.realm.name.en_US} | ${character.active_spec.name.en_US} ${character.character_class.name.en_US} | ${character.equipped_item_level} ilvl | ${getHeartOfAzerothLevel(character.equipment)} HoA`,
                 url: `https://worldofwarcraft.com/en-us/character/${args[0]}/${args[1]}`
             },
             thumbnail: {
-                url: `http://render-us.worldofwarcraft.com/character/${character.thumbnail}`
+                url: character.media.avatar_url
             },
             color: 3447003,
             description: 'Character data and stuff',
             fields: [
                 {
                     name: 'Raid Progress',
-                    value: buildRecentRaidList(character.progression.raids),
+                    value: buildRecentRaidList(character.encounters),
                     inline: true
                 },
                 {
@@ -43,19 +40,19 @@ export async function lookup(args: string[], message: Message) {
     })
 }
 
-function buildRecentRaidList(raids: Raid[]): string {
+function buildRecentRaidList(raids: Encounters[]): string {
     let dataString: string = ''
 
     if (!raids) {
         dataString = '**Battle.net API is Down**'
     } else {
-        for (let i: number = raids.length - 1; i >= raids.length - 5; i--) {
-            const raid: Raid = raids[i]
-            const highestDifficulty: string = raid.mythic > 0 ? 'mythic' : raid.heroic > 0 ? 'heroic' : raid.normal > 0 ? 'normal' : 'lfr'
-            const count: number = raid.bosses.filter((x: Boss) => {
-                return get(x, `${highestDifficulty}Kills`, 0) > 0
-            }).length
-            dataString = dataString.concat(`**${raid.name}:** ${count}/${raid.bosses.length}${highestDifficulty.slice(0, 1).toUpperCase()}\n`)
+        const currentExpansion: Encounters = find(raids, (x: Encounters) => {
+            return x.expansion.id === Expansions.BattleForAzeroth
+        })
+        for (let i: number = currentExpansion.instances.length - 1; i >= 0; i--) {
+            const raid: Instance = currentExpansion.instances[i]
+            const highestDifficulty: Mode = raid.modes[raid.modes.length - 1]
+            dataString = dataString.concat(`**${raid.instance.name}:** ${highestDifficulty.progress.completed_count}/${highestDifficulty.progress.total_count}${highestDifficulty.difficulty.type.slice(0, 1)}\n`)
         }
     }
     return dataString
@@ -77,4 +74,12 @@ function buildMythicPlusDungeonList(raiderIOData: RaiderIOCharacterData): string
     }
 
     return dataString
+}
+
+function getHeartOfAzerothLevel(items: Item[]) {
+    const hoa: Item = find(items, (x) => {
+        return x.slot.type === 'NECK'
+    })
+
+    return hoa.azerite_details.level.value
 }

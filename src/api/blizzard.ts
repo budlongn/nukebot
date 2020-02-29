@@ -1,5 +1,5 @@
 import axios, {AxiosInstance} from 'axios'
-import {Character} from "../types/character.Types"
+import {Character, CharacterMedia, Encounters, Item} from "../types/character.Types"
 
 let apiClient: AxiosInstance
 
@@ -49,14 +49,60 @@ async function createResponseInterceptor(): Promise<void> {
     })
 }
 
-export async function getCharacter(fields: string[], realm: string, name: string): Promise<Character> {
+export async function getCharacter(realm: string, name: string): Promise<Character> {
     try {
-        const {data} = await apiClient.get<Character>(`/wow/character/${realm}/${name}`, {
-            params: {
-                fields: fields.toString()
+        const {data} = await apiClient.get<Character>(`/profile/wow/character/${realm}/${name}`, {
+            headers: {
+                'Battlenet-Namespace': 'profile-us'
             }
         })
         return data
+    } catch (e) {
+        const {data} = e.response
+        return data
+    }
+}
+
+export async function getCharacterEquipment(realm: string, name: string): Promise<Item[]> {
+    try {
+        const {data} = await apiClient.get(`/profile/wow/character/${realm}/${name}/equipment`, {
+            headers: {
+                'Battlenet-Namespace': 'profile-us'
+            }
+        })
+        return data.equipped_items
+    } catch (e) {
+        const {data} = e.response
+        return data
+    }
+}
+
+export async function getCharacterRaidProgress(realm: string, name: string): Promise<Encounters[]> {
+    try {
+        const {data} = await apiClient.get(`/profile/wow/character/${realm}/${name}/encounters/raids`, {
+            headers: {
+                'Battlenet-Namespace': 'profile-us'
+            }
+        })
+        return data.expansions
+    } catch (e) {
+        const {data} = e.response
+        return data
+    }
+}
+
+export async function getCharacterMedia(realm: string, name: string): Promise<CharacterMedia> {
+    try {
+        const {data} = await apiClient.get(`/profile/wow/character/${realm}/${name}/character-media`, {
+            headers: {
+                'Battlenet-Namespace': 'profile-us'
+            }
+        })
+        return {
+            avatar_url: data.avatar_url,
+            bust_url: data.bust_url,
+            render_url: data.render_url
+        }
     } catch (e) {
         const {data} = e.response
         return data
