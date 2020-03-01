@@ -32,13 +32,9 @@ async function createResponseInterceptor(): Promise<void> {
         try {
             if (error.config && error.response && error.response.status === 401) {
                 apiClient.interceptors.response.eject(interceptor) //to avoid looping if somehow the token call returns 401
-                const token = await getAuthToken()
-                apiClient.defaults.headers = {
-                    Authorization: token
-                }
-                error.config.headers = {
-                    Authorization: token
-                }
+                const token: string = await getAuthToken()
+                Object.assign(apiClient.defaults.headers, {Authorization: token})
+                Object.assign(error.config.headers, {Authorization: token})
                 return apiClient.request(error.config)
             }
         } catch {
