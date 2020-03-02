@@ -8,9 +8,13 @@ import {getCharacterData} from '../api/raiderio'
 
 export async function lookup(args: string[], message: Message) {
     const character: Character = await getCharacter(args[0], args[1])
+    if (!character) {
+        return await message.channel.send('Character not found')
+    }
     character.encounters = await getCharacterRaidProgress(args[0], args[1])
     character.equipment = await getCharacterEquipment(args[0], args[1])
     character.media = await getCharacterMedia(args[0], args[1])
+
     const raiderIOData: RaiderIOCharacterData = await getCharacterData(['mythic_plus_best_runs', 'mythic_plus_scores_by_season:current'], args[0], args[1])
 
     return await message.channel.send({

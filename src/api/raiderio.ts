@@ -23,6 +23,6 @@ export async function getCharacterData(fields: string[], realm: string, name: st
 
         return data
     } catch (e) {
-        console.log(e)
+        console.log(`Raider IO API Error\nStatus Code: ${e.response.status}`)
     }
 }

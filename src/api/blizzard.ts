@@ -42,6 +42,7 @@ async function createResponseInterceptor(): Promise<void> {
         } finally {
             await createResponseInterceptor()
         }
+        throw error
     })
 }
 
@@ -54,8 +55,7 @@ export async function getCharacter(realm: string, name: string): Promise<Charact
         })
         return data
     } catch (e) {
-        const {data} = e.response
-        return data
+        console.log(`Blizzard API Error\nStatus Code: ${e.response.status}`)
     }
 }
 
@@ -68,8 +68,7 @@ export async function getCharacterEquipment(realm: string, name: string): Promis
         })
         return data.equipped_items
     } catch (e) {
-        const {data} = e.response
-        return data
+        console.log(`Blizzard API Error\nStatus Code: ${e.response.status}`)
     }
 }
 
@@ -82,8 +81,7 @@ export async function getCharacterRaidProgress(realm: string, name: string): Pro
         })
         return data.expansions
     } catch (e) {
-        const {data} = e.response
-        return data
+        console.log(`Blizzard API Error\nStatus Code: ${e.response.status}`)
     }
 }
 
@@ -100,7 +98,6 @@ export async function getCharacterMedia(realm: string, name: string): Promise<Ch
             render_url: data.render_url
         }
     } catch (e) {
-        const {data} = e.response
-        return data
+        console.log(`Blizzard API Error\nStatus Code: ${e.response.status}`)
     }
 }
