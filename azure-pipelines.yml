@@ -1,42 +1,57 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
 - master
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '13.x'
-  displayName: 'Install Node.js'
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '13.x'
+            displayName: 'Install Node.js'
 
-- task: YarnInstaller@3
-  inputs:
-    versionSpec: '1.x'
+          - task: YarnInstaller@3
+            inputs:
+              versionSpec: '1.x'
+            displayName: 'Install Yarn'
 
-- script: |
-    yarn install
-    yarn build
-    pwd
-    ls
-  displayName: 'Yarn install and build'
+          - script: |
+              yarn install
+              yarn build
+            displayName: 'Yarn install and build'
 
-- task: CopyFilesOverSSH@0
-  inputs:
-    sshEndpoint: 'Nighthawk'
-    sourceFolder: 'build'
-    contents: 'index.js'
-    targetFolder: $(TargetFolder)
+          - publish: $(System.DefaultWorkingDirectory)/build
+            artifact: NukeBot
+            displayName: 'Publish Artifacts'
 
-- task: SSH@0
-  inputs:
-    sshEndpoint: 'Nighthawk'
-    runOptions: 'commands'
-    commands: |
-      sudo chown discord $(TargetFolder)/index.js
-      sudo systemctl restart discord-bot
+  - stage: DeployProd
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master'))
+    displayName: 'Deploy Production'
+    dependsOn: Build
+    jobs:
+      - job: DeployProduction
+        steps:
+          - download: current
+            artifact: NukeBot
+            displayName: 'Download Artifacts'
+              
+          - task: CopyFilesOverSSH@0
+            inputs:
+              sshEndpoint: 'Nighthawk'
+              sourceFolder: '$(Pipeline.Workspace)/NukeBot'
+              contents: 'index.js'
+              targetFolder: $(TargetFolder)
+            displayName: 'Copy files to server'
+
+          - task: SSH@0
+            inputs:
+              sshEndpoint: 'Nighthawk'
+              runOptions: 'commands'
+              commands: |
+                sudo chown discord $(TargetFolder)/index.js
+                sudo systemctl restart discord-bot
+            displayName: 'Restart bot service'
