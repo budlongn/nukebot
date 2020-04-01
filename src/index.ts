@@ -12,10 +12,10 @@ client.on('ready', async () => {
     await initializeAPIClients()
     await client.user.setPresence({
         status: 'online',
-        game: {
+        activity: {
             name: 'Kicking Doors and Slapping Whores',
-            type: 'PLAYING',
-        },
+            type: 'PLAYING'
+        }
     })
     console.log('Bot Online')
 })
