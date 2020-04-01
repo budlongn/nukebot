@@ -44,13 +44,14 @@ stages:
             displayName: 'Download Artifacts'
 
           - script: |
+              cd $(Pipeline.Workspace)
               pwd
               ls
               
           - task: CopyFilesOverSSH@0
             inputs:
               sshEndpoint: 'Nighthawk'
-              sourceFolder: 'build'
+              sourceFolder: '$(Pipeline.Workspace)/NukeBot'
               contents: 'index.js'
               targetFolder: $(TargetFolder)
 
