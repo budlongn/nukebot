@@ -12,7 +12,7 @@ client.on('ready', async () => {
     await initializeAPIClients()
     await client.user.setPresence({
         status: 'online',
-        activity: {
+        game: {
             name: 'Kicking Doors and Slapping Whores',
             type: 'PLAYING'
         }
