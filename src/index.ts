@@ -26,7 +26,7 @@ client.on('message', async (message: Message) => {
     let performGamaAlert: boolean = process.env.PERFORM_GAMA_ALERT === 'true'
 
     if (performGamaAlert && message.author.id === process.env.GAMA_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
-        return message.channel.send('WARNING, POTENTIAL GAMAPOST, PROCEED WITH CAUTION')
+        return await commandHandler('gamapost', null, message)
     }
 
     if (!message.content.startsWith(prefix)) return
