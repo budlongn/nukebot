@@ -11,7 +11,7 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '13.x'
+              versionSpec: '14.x'
             displayName: 'Install Node.js'
 
           - task: YarnInstaller@3
@@ -21,10 +21,18 @@ stages:
 
           - script: |
               yarn install
-              yarn build
-            displayName: 'Yarn install and build'
+              tsc
+            displayName: 'Yarn install and transpile'
 
-          - publish: $(System.DefaultWorkingDirectory)/build
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/NukeBot.zip'
+              replaceExistingArchive: true
+
+          - publish: $(Build.ArtifactStagingDirectory)/NukeBot.zip
             artifact: NukeBot
             displayName: 'Publish Artifacts'
 
@@ -38,13 +46,14 @@ stages:
           - download: current
             artifact: NukeBot
             displayName: 'Download Artifacts'
-              
+                
           - task: CopyFilesOverSSH@0
             inputs:
               sshEndpoint: 'Nighthawk'
               sourceFolder: '$(Pipeline.Workspace)/NukeBot'
-              contents: 'index.js'
-              targetFolder: $(TargetFolder)
+              contents: NukeBot.zip
+              targetFolder: '$(TargetFolder)'
+              readyTimeout: '20000'
             displayName: 'Copy files to server'
 
           - task: SSH@0
@@ -52,6 +61,8 @@ stages:
               sshEndpoint: 'Nighthawk'
               runOptions: 'commands'
               commands: |
-                sudo chown discord $(TargetFolder)/index.js
+                sudo 7z x $(TargetFolder)/NukeBot.zip -o$(TargetFolder)/NukeBot/ -aoa
+                sudo rm -rf $(TargetFolder)/NukeBot.zip
+                sudo chown discord $(TargetFolder)/NukeBot/*
                 sudo systemctl restart discord-bot
             displayName: 'Restart bot service'
