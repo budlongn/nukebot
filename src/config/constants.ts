@@ -1,0 +1,1 @@
+export const uriRegex: RegExp = /(https?|chrome):\/\/[^\s$.?#].[^\s]*/m

@@ -1,9 +1,9 @@
-import {Message} from 'discord.js'
+import {EmojiResolvable, Message} from 'discord.js'
+import {uriRegex} from "../config/constants"
 
 export async function pwnpost(message: Message) {
-    const regex: RegExp = /(https?|chrome):\/\/[^\s$.?#].[^\s]*/gm
-
-    if (regex.test(message.content) || message.attachments.first()) {
-        await message.react(process.env.EMOJI_ID)
+    if (uriRegex.test(message.content) || message.attachments.first()) {
+        const emoji: EmojiResolvable = message.guild.emojis.resolveIdentifier(process.env.EMOJI_ID)
+        if (emoji) await message.react(emoji)
     }
 }
