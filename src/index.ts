@@ -28,6 +28,9 @@ client.on('message', async (message: Message) => {
     if (performGamaAlert && message.author.id === process.env.GAMA_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
         await commandHandler('gamapost', null, message)
     }
+    if (performGamaAlert && message.author.id === process.env.PWN_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
+        await commandHandler('pwnpost', null, message)
+    }
 
     if (!message.content.startsWith(prefix)) return
 
