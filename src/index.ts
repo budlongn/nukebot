@@ -1,11 +1,24 @@
-import {Client, Message} from 'discord.js'
-import {commandHandler} from './handlers/command'
+import {Client, Collection, Message} from 'discord.js'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
+import * as fs from "fs"
+
+class ExtendedClient extends Client {
+    public commands?: Collection<string, any>
+}
 
 config()
-const client = new Client()
+
+const client: ExtendedClient = new Client()
+client.commands = new Collection()
+
+const commandFiles: string[] = fs.readdirSync(`${__dirname}/commands`).filter(file => file.endsWith('.js'));
+commandFiles.map((file: string) => {
+    const command = require(`./commands/${file}`)
+    client.commands.set(command.name, command)
+})
+
 const prefix = '!'
 
 client.on('ready', async () => {
@@ -26,10 +39,10 @@ client.on('message', async (message: Message) => {
     let performGamaAlert: boolean = process.env.PERFORM_GAMA_ALERT === 'true'
 
     if (performGamaAlert && message.author.id === process.env.GAMA_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
-        await commandHandler('gamapost', null, message)
+        await client.commands.get('gamapost').execute(null, message)
     }
     if (performGamaAlert && message.author.id === process.env.PWN_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
-        await commandHandler('pwnpost', null, message)
+        await client.commands.get('pwnpost').execute(null, message)
     }
 
     if (!message.content.startsWith(prefix)) return
@@ -37,7 +50,11 @@ client.on('message', async (message: Message) => {
     const args: string[] = parseArgs(prefix, message.content)
     const command: string = args.shift().toLowerCase()
 
-    return await commandHandler(command, args, message)
+    try {
+        return await client.commands.get(command).execute(args, message)
+    } catch {
+        return await message.channel.send('I have no idea what the FUCK you\'re talking about')
+    }
 })
 
 
