@@ -49,6 +49,7 @@ client.on('message', async (message: Message) => {
 
     const args: string[] = parseArgs(prefix, message.content)
     const command: string = args.shift().toLowerCase()
+    if (command === 'pwnpost' || command === 'gamapost') return
 
     try {
         return await client.commands.get(command).execute(args, message)
