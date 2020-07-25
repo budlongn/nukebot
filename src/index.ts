@@ -59,13 +59,17 @@ client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) =>
         }
 
         if (reaction.count === 5) {
-            await reaction.message.member.setNickname('Village Idiot')
-            await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
+            try {
+                await reaction.message.member.setNickname('KPS Student')
+                await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
+            } catch (e) {
+                console.error(e)
+            } finally {
+                setTimeout(async () => {
+                    await reaction.message.member.setNickname(originalNickname)
+                }, 60 * 5 * 1000) //5 Minutes
+            }
         }
-
-        setTimeout(async () => {
-            await reaction.message.member.setNickname(originalNickname)
-        }, 60 * 5 * 1000) //5 Minutes
     }
 )
 
