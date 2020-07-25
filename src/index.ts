@@ -1,4 +1,4 @@
-import {Client, Message} from 'discord.js'
+import {Client, Message, MessageReaction, Permissions, User} from 'discord.js'
 import {commandHandler} from './handlers/command'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
@@ -40,6 +40,34 @@ client.on('message', async (message: Message) => {
     return await commandHandler(command, args, message)
 })
 
+client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
+        if (reaction.emoji.id !== process.env.WTF_ID) return
+
+        if (reaction.partial) {
+            try {
+                await reaction.fetch()
+            } catch (e) {
+                console.error('Error fetching reaction')
+                return
+            }
+        }
+
+        const originalNickname: string = reaction.message.member.nickname || reaction.message.member.user.username
+
+        if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
+            return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
+        }
+
+        if (reaction.count === 5) {
+            await reaction.message.member.setNickname('Village Idiot')
+            await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
+        }
+
+        setTimeout(async () => {
+            await reaction.message.member.setNickname(originalNickname)
+        }, 60 * 5 * 1000) //5 Minutes
+    }
+)
 
 client.login(process.env.DISCORD_TOKEN).then(() => {
     console.log('Login Success')
