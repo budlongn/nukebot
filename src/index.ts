@@ -41,37 +41,37 @@ client.on('message', async (message: Message) => {
 })
 
 client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
-        if (reaction.emoji.id !== process.env.WTF_ID) return
+    console.log(`Reaction added id: ${reaction.emoji.id}`)
+    if (reaction.emoji.id !== process.env.WTF_ID) return
 
-        if (reaction.partial) {
-            try {
-                await reaction.fetch()
-            } catch (e) {
-                console.error('Error fetching reaction')
-                return
-            }
-        }
-
-        const originalNickname: string = reaction.message.member.nickname || reaction.message.member.user.username
-
-        if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
-            return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
-        }
-
-        if (reaction.count === 5) {
-            try {
-                await reaction.message.member.setNickname('KPS Student')
-                await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
-            } catch (e) {
-                console.error(e)
-            } finally {
-                setTimeout(async () => {
-                    await reaction.message.member.setNickname(originalNickname)
-                }, 60 * 5 * 1000) //5 Minutes
-            }
+    if (reaction.partial) {
+        try {
+            await reaction.fetch()
+        } catch (e) {
+            console.error('Error fetching reaction')
+            return
         }
     }
-)
+
+    const originalNickname: string = reaction.message.member.nickname || reaction.message.member.user.username
+
+    if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
+        return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
+    }
+
+    if (reaction.count === 5) {
+        try {
+            await reaction.message.member.setNickname('KPS Student')
+            await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setTimeout(async () => {
+                await reaction.message.member.setNickname(originalNickname)
+            }, 60 * 5 * 1000) //5 Minutes
+        }
+    }
+})
 
 client.login(process.env.DISCORD_TOKEN).then(() => {
     console.log('Login Success')
