@@ -1,4 +1,4 @@
-import {Client, Message, MessageReaction, Permissions, User} from 'discord.js'
+import {Client, Collection, Message, MessageReaction, Permissions, User} from 'discord.js'
 import {commandHandler} from './handlers/command'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
@@ -7,6 +7,7 @@ import {initializeAPIClients} from './config/config'
 config()
 const client = new Client()
 const prefix = '!'
+let cache: string[] = []
 
 client.on('ready', async () => {
     await initializeAPIClients()
@@ -41,7 +42,7 @@ client.on('message', async (message: Message) => {
 })
 
 client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
-    if (reaction.emoji.id !== process.env.WTF_ID) return
+    if (reaction.emoji.id !== process.env.WTF_ID || cache.includes(reaction.message.id)) return
 
     if (reaction.partial) {
         try {
@@ -55,6 +56,7 @@ client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) =>
     const originalNickname: string = reaction.message.member.nickname || reaction.message.member.user.username
 
     if (reaction.count === 5) {
+        cache.push(reaction.message.id)
         try {
             if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
                 return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
