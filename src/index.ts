@@ -41,7 +41,6 @@ client.on('message', async (message: Message) => {
 })
 
 client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
-    console.log(`Reaction added id: ${reaction.emoji.id}`)
     if (reaction.emoji.id !== process.env.WTF_ID) return
 
     if (reaction.partial) {
@@ -55,12 +54,12 @@ client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) =>
 
     const originalNickname: string = reaction.message.member.nickname || reaction.message.member.user.username
 
-    if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
-        return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
-    }
-
     if (reaction.count === 5) {
         try {
+            if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
+                return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
+            }
+
             await reaction.message.member.setNickname('KPS Student')
             await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
         } catch (e) {
