@@ -1,7 +1,8 @@
-import {Client, Collection, Message} from 'discord.js'
+import {Client, Collection, Message, MessageReaction, Permissions, User, WebhookClient} from 'discord.js'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
+import * as puppeteer from 'puppeteer'
 import * as fs from "fs"
 
 class ExtendedClient extends Client {
@@ -9,7 +10,7 @@ class ExtendedClient extends Client {
 }
 
 config()
-
+const webhookClient = new WebhookClient(process.env.WEBHOOK_ID, process.env.WEBHOOK_TOKEN)
 const client: ExtendedClient = new Client()
 client.commands = new Collection()
 
@@ -20,6 +21,29 @@ commandFiles.map((file: string) => {
 })
 
 const prefix = '!'
+let cache: string[] = []
+let existingDoc: string
+
+const statusCheck = async () => {
+    try {
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage()
+        await page.goto('https://novelkeys.xyz/collections/extras-group-buy')
+        const newDoc: string = await page.evaluate(() => {
+            return document.querySelector('#Collection').innerHTML
+        })
+        await browser.close()
+        if (newDoc !== existingDoc) {
+            existingDoc = newDoc
+            await webhookClient.send('https://novelkeys.xyz/collections/extras-group-buy page change detected')
+        }
+    } catch (e) {
+        console.log(e)
+        await webhookClient.send(`Encountered an error\n${e}`)
+    }
+    setTimeout(statusCheck, 1000 * 60 * 30)
+}
+statusCheck()
 
 client.on('ready', async () => {
     await initializeAPIClients()
@@ -58,6 +82,38 @@ client.on('message', async (message: Message) => {
     }
 })
 
+client.on('messageReactionAdd', async (reaction: MessageReaction, user: User) => {
+    if (reaction.emoji.id !== process.env.WTF_ID || cache.includes(reaction.message.id)) return
+
+    if (reaction.partial) {
+        try {
+            await reaction.fetch()
+        } catch (e) {
+            console.error('Error fetching reaction')
+            return
+        }
+    }
+
+    const originalNickname: string = reaction.message.member.nickname || reaction.message.member.user.username
+
+    if (reaction.count === 5) {
+        cache.push(reaction.message.id)
+        try {
+            if (reaction.message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
+                return await reaction.message.channel.send(`${originalNickname} has been voted an idiot, unfortunately I can't change their name`)
+            }
+
+            await reaction.message.member.setNickname('KPS Student')
+            await reaction.message.channel.send(`${originalNickname} has been voted an idiot, their name has been changed as such`)
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setTimeout(async () => {
+                await reaction.message.member.setNickname(originalNickname)
+            }, 60 * 5 * 1000) //5 Minutes
+        }
+    }
+})
 
 client.login(process.env.DISCORD_TOKEN).then(() => {
     console.log('Login Success')
