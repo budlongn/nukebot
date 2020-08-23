@@ -28,7 +28,7 @@ const statusCheck = async () => {
         await browser.close()
         if (newDoc !== existingDoc) {
             existingDoc = newDoc
-            await webhookClient.send('Page change detected https://novelkeys.xyz/collections/extras-group-buy', {
+            await webhookClient.send('Page change detected <https://novelkeys.xyz/collections/extras-group-buy>', {
                 files: [screenshot]
             })
         }
