@@ -28,20 +28,27 @@ const statusCheck = async () => {
     try {
         const browser = await puppeteer.launch()
         const page = await browser.newPage()
+        await page.setViewport({
+            width: 2560,
+            height: 1440
+        })
         await page.goto('https://novelkeys.xyz/collections/extras-group-buy')
         const newDoc: string = await page.evaluate(() => {
             return document.querySelector('#Collection').innerHTML
         })
+        const screenshot = await page.screenshot()
         await browser.close()
         if (newDoc !== existingDoc) {
             existingDoc = newDoc
-            await webhookClient.send('https://novelkeys.xyz/collections/extras-group-buy page change detected')
+            await webhookClient.send('Page change detected <https://novelkeys.xyz/collections/extras-group-buy>', {
+                files: [screenshot]
+            })
         }
     } catch (e) {
         console.log(e)
         await webhookClient.send(`Encountered an error\n${e}`)
     }
-    setTimeout(statusCheck, 1000 * 60 * 30)
+    setTimeout(statusCheck, 1000 * 60 * 10)
 }
 statusCheck()
 
