@@ -3,6 +3,7 @@ import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
 import * as puppeteer from 'puppeteer'
+import {isEqual} from 'lodash'
 import * as fs from "fs"
 
 class ExtendedClient extends Client {
@@ -22,7 +23,7 @@ commandFiles.map((file: string) => {
 
 const prefix = '!'
 let cache: string[] = []
-let existingDoc: string
+let existingProductList: string[] = []
 
 const statusCheck = async () => {
     try {
@@ -33,17 +34,22 @@ const statusCheck = async () => {
             height: 1440
         })
         await page.goto('https://novelkeys.xyz/collections/extras-group-buy')
-        const newDoc: string = await page.evaluate(() => {
-            return document.querySelector('#Collection').innerHTML
+        const newProductList: string[] = await page.evaluate(() => {
+            const products: string[] = []
+            document
+                .querySelectorAll('#Collection > ul > li > div > div.one-whole > div')
+                .forEach((element: Element) => {
+                    products.push(element.textContent)
+                })
+            return products.sort()
         })
-        const screenshot = await page.screenshot()
-        await browser.close()
-        if (newDoc !== existingDoc) {
-            existingDoc = newDoc
-            await webhookClient.send('Page change detected <https://novelkeys.xyz/collections/extras-group-buy>', {
-                files: [screenshot]
+        if (!isEqual(existingProductList, newProductList)) {
+            existingProductList = newProductList
+            await webhookClient.send(`<@${process.env.ME_ID}> Page change detected <https://novelkeys.xyz/collections/extras-group-buy>`, {
+                files: [await page.screenshot()]
             })
         }
+        await browser.close()
     } catch (e) {
         console.log(e)
         await webhookClient.send(`Encountered an error\n${e}`)
