@@ -33,7 +33,7 @@ const statusCheck = async () => {
         })
         if (!isEqual(existingProductList, newProductList)) {
             existingProductList = newProductList
-            await webhookClient.send('Page change detected <https://novelkeys.xyz/collections/extras-group-buy>', {
+            await webhookClient.send(`<@${process.env.ME_ID}> Page change detected <https://novelkeys.xyz/collections/extras-group-buy>`, {
                 files: [await page.screenshot()]
             })
         }
