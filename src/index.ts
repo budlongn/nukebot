@@ -75,6 +75,8 @@ client.on('message', async (message: Message) => {
     const args: string[] = parseArgs(prefix, message.content)
     const command: string = args.shift().toLowerCase()
 
+    if (command.startsWith(prefix)) return
+
     return await commandHandler(command, args, message)
 })
 
