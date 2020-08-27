@@ -88,6 +88,8 @@ client.on('message', async (message: Message) => {
     const command: string = args.shift().toLowerCase()
     if (command === 'pwnpost' || command === 'gamapost') return
 
+    if (command.startsWith(prefix)) return
+
     try {
         return await client.commands.get(command).execute(args, message)
     } catch {
