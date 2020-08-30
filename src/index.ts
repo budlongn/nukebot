@@ -11,7 +11,7 @@ const client = new Client()
 const webhookClient = new WebhookClient(process.env.WEBHOOK_ID, process.env.WEBHOOK_TOKEN)
 const prefix = '!'
 let cache: string[] = []
-let existingProductList: string[] = []
+let existingProductList: string[][] = []
 
 const statusCheck = async () => {
     try {
@@ -21,13 +21,15 @@ const statusCheck = async () => {
             width: 2560,
             height: 1440
         })
+
         await page.goto('https://novelkeys.xyz/collections/extras-group-buy')
-        const newProductList: string[] = await page.evaluate(() => {
-            const products: string[] = []
+        const newProductList: string[][] = await page.evaluate(() => {
+            const products: string[][] = []
             document
-                .querySelectorAll('#Collection > ul > li > div > div.one-whole > div')
+                .querySelectorAll('#Collection > ul > li')
                 .forEach((element: Element) => {
-                    products.push(element.textContent)
+                    const product: string[] = [element.querySelector('div > div.one-whole > div').textContent, element.querySelector('#overlay_text')?.textContent]
+                    products.push(product)
                 })
             return products.sort()
         })
