@@ -14,14 +14,13 @@ let cache: string[] = []
 let existingProductList: string[][] = []
 
 const statusCheck = async () => {
+    const browser = await puppeteer.launch()
     try {
-        const browser = await puppeteer.launch()
         const page = await browser.newPage()
         await page.setViewport({
             width: 2560,
             height: 1440
         })
-
         await page.goto('https://novelkeys.xyz/collections/extras-group-buy')
         const newProductList: string[][] = await page.evaluate(() => {
             const products: string[][] = []
@@ -39,10 +38,11 @@ const statusCheck = async () => {
                 files: [await page.screenshot()]
             })
         }
-        await browser.close()
     } catch (e) {
         console.log(e)
         await webhookClient.send(`Encountered an error\n${e}`)
+    } finally {
+        await browser.close()
     }
     setTimeout(statusCheck, 1000 * 60 * 10)
 }
