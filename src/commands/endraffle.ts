@@ -19,8 +19,9 @@ export async function endraffle(args: string[], message: Message) {
                 if (err) {
                     console.log(err)
                     return await m.channel.send(`Error deleting raffle db file:\n\n${err}`)
+                } else {
+                    return await m.channel.send(`Raffle has been ended`)
                 }
-                return await m.channel.send(`Raffle has been ended`)
             })
         }
     })

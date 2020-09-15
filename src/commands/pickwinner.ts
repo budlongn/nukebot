@@ -1,4 +1,4 @@
-import {Message, Permissions} from "discord.js";
+import {Message, Permissions, TextChannel} from "discord.js";
 import * as fs from "fs";
 import {Entry, RaffleDB} from "../types/raffle.Types";
 import {sample} from 'lodash';
@@ -13,6 +13,9 @@ export async function pickwinner(args: string[], message: Message) {
     }
 
     let raffle: RaffleDB = JSON.parse(fs.readFileSync('raffle.json', 'utf8'))
+
+    if (raffle.entries.length === 0) return await message.channel.send('Raffle has no entries')
+
     const winner: Entry = sample(raffle.entries)
     raffle.winner = winner
 
@@ -22,6 +25,7 @@ export async function pickwinner(args: string[], message: Message) {
             return await message.channel.send(`Error writing db file:\n${err}`)
         }
 
-        return await message.channel.send(`The winner is <@${winner.id}>\n\nProof Screenshot:\n${winner.proof}`)
+        const channel: TextChannel = <TextChannel>message.guild.channels.cache.get(raffle.channel)
+        return await channel.send(`The winner is <@${winner.id}>\n\nProof Screenshot:\n${winner.proof}`)
     })
 }
