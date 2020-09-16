@@ -4,15 +4,31 @@ import {Character, CharacterMedia, Encounters, Item} from "../types/character.Ty
 let apiClient: AxiosInstance
 
 async function getAuthToken(): Promise<string> {
-    const {data: authRequest} = await axios.get('https://us.battle.net/oauth/token', {
-        params: {
-            grant_type: 'client_credentials',
-            client_id: process.env.BATTLE_NET_API_CLIENT_ID,
-            client_secret: process.env.BATTLE_NET_API_SECRET
-        }
-    })
+    try {
+        const {data: authRequest} = await axios.post('https://us.battle.net/oauth/token',null,{
+            params: {
+                grant_type: 'client_credentials',
+                client_id: process.env.BATTLE_NET_API_CLIENT_ID,
+                client_secret: process.env.BATTLE_NET_API_SECRET
+            }
+        })
 
-    return `Bearer ${authRequest.access_token}`
+        // const {data: authRequest} =
+        //     await axios.post('https://us.battle.net/oauth/token', {
+        //         grant_type: 'client_credentials',
+        //         region: 'us'
+        //     }, {
+        //         auth: {
+        //             username: process.env.BATTLE_NET_API_CLIENT_ID,
+        //             password: process.env.BATTLE_NET_API_SECRET
+        //         }
+        //     })
+
+        return `Bearer ${authRequest.access_token}`
+    } catch (e) {
+        console.log(e)
+    }
+    return null
 }
 
 export async function initializeBlizzardClient(): Promise<void> {
