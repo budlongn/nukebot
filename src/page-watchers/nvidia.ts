@@ -33,7 +33,7 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
     }
     setTimeout(() => {
         nvidiaCheck(webhookClient)
-    }, 1000 * 60)
+    }, 1000 * 30)
 }
 
 async function sleep(msec) {
