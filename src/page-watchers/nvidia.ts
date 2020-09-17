@@ -15,6 +15,7 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
             height: 1440
         })
         await page.goto(url, {waitUntil: "networkidle0"})
+        await sleep(5000)
         const newProduct: string = await page.evaluate(() => {
             return document.querySelector('#mainCont > featured-product > div > div')?.outerHTML
         })
@@ -33,4 +34,8 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
     setTimeout(() => {
         nvidiaCheck(webhookClient)
     }, 1000 * 60)
+}
+
+async function sleep(msec) {
+    return new Promise(resolve => setTimeout(resolve, msec));
 }
