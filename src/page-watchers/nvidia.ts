@@ -14,8 +14,8 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
             width: 2560,
             height: 1440
         })
-        await page.goto(url, {waitUntil: "networkidle0"})
-        await sleep(5000)
+        await page.goto(url)
+        await sleep(2000)
         const newProduct: string = await page.evaluate(() => {
             return document.querySelector('#mainCont > featured-product > div > div')?.outerHTML
         })
@@ -29,7 +29,9 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
         console.log(e)
         await webhookClient.send(`Encountered an error\n${e}`)
     } finally {
+        console.log('closing browser')
         await browser.close()
+        console.log('browser closed')
     }
     setTimeout(() => {
         nvidiaCheck(webhookClient)
