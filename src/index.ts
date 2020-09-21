@@ -7,14 +7,13 @@ import {novelkeysCheck} from "./page-watchers/novelkeys";
 import {nvidiaCheck} from "./page-watchers/nvidia";
 
 config()
-const webhookClient = new WebhookClient(process.env.WEBHOOK_ID, process.env.WEBHOOK_TOKEN)
-const tempWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
+const shrugWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
 const client = new Client()
 const prefix = '!'
 let cache: string[] = []
 
-novelkeysCheck(webhookClient)
-nvidiaCheck(tempWebhookClient)
+novelkeysCheck(shrugWebhookClient)
+nvidiaCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     await initializeAPIClients()

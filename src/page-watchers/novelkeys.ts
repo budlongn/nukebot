@@ -26,7 +26,7 @@ export const novelkeysCheck = async (webhookClient: WebhookClient) => {
         })
         if (!isEqual(existingProductList, newProductList)) {
             existingProductList = newProductList
-            await webhookClient.send(`<@${process.env.ME_ID}> Page change detected <${url}>`, {
+            await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.LUKE_ID}> Page change detected <${url}>`, {
                 files: [await page.screenshot()]
             })
         }
