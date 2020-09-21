@@ -14,7 +14,7 @@ const RaffleEntrySchema: Schema = new Schema({
     name: {type: String, required: true},
     proof: {type: String, required: true},
     raffle: {type: Schema.Types.ObjectId, required: true},
-    time: {type: String, required: true}
+    time: {type: Date, required: true}
 })
 
 export default mongoose.model<IRaffleEntry>('RaffleEntry', RaffleEntrySchema)

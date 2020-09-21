@@ -1,12 +1,12 @@
-import puppeteer from 'puppeteer';
-import {isEqual} from 'lodash';
-import {WebhookClient} from 'discord.js';
+import puppeteer from 'puppeteer'
+import {isEqual} from 'lodash'
+import {WebhookClient} from 'discord.js'
 
 let existingProduct: string
 
 export const nvidiaCheck = async (webhookClient: WebhookClient) => {
 
-    const url = 'https://www.nvidia.com/en-us/shop/geforce/?page=1&limit=9&locale=en-us'
+    const url = 'https://www.nvidia.com/en-us/shop/geforce/?page=1&limit=9&locale=en-us&search=rtx%203080'
     const browser = await puppeteer.launch()
     try {
         const page = await browser.newPage()
@@ -16,9 +16,18 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
         })
         await page.goto(url)
         await sleep(5000)
+
         const newProduct: string = await page.evaluate(() => {
-            return document.querySelector('#mainCont > featured-product > div > div')?.outerHTML
+            let product: string = null
+            document.querySelectorAll('#resultsDiv > div > div').forEach((element)=> {
+                const selected = element.querySelector('div.details-col > h2')
+                if (selected.textContent === 'NVIDIA GEFORCE RTX 3080') {
+                    product = element.outerHTML
+                }
+            })
+            return product
         })
+
         if (!isEqual(existingProduct, newProduct)) {
             existingProduct = newProduct
             await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.SANDY_ID}> <@${process.env.HOANG_ID}> Page change detected <${url}>`, {
