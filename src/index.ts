@@ -3,8 +3,9 @@ import {commandHandler} from './handlers/command'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
-import {novelkeysCheck} from "./page-watchers/novelkeys";
-import {nvidiaCheck} from "./page-watchers/nvidia";
+import {novelkeysCheck} from './page-watchers/novelkeys';
+import {nvidiaCheck} from './page-watchers/nvidia';
+import connect from './connect';
 
 config()
 const shrugWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
@@ -16,6 +17,7 @@ novelkeysCheck(shrugWebhookClient)
 nvidiaCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
+    connect(process.env.MONGO_CONNECTION)
     await initializeAPIClients()
     await client.user.setPresence({
         status: 'online',
