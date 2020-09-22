@@ -14,7 +14,7 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
             width: 2560,
             height: 1440
         })
-        await page.goto(url)
+        await page.goto(url, {waitUntil: 'networkidle0'})
         await sleep(5000)
 
         const newProduct: string = await page.evaluate(() => {
@@ -29,18 +29,18 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
         })
 
         if (!isEqual(existingProduct, newProduct)) {
+            if (existingProduct) {
+                await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.SANDY_ID}> <@${process.env.HOANG_ID}> Page change detected <${url}>`, {
+                    files: [await page.screenshot()]
+                })
+            }
             existingProduct = newProduct
-            await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.SANDY_ID}> <@${process.env.HOANG_ID}> Page change detected <${url}>`, {
-                files: [await page.screenshot()]
-            })
         }
     } catch (e) {
         console.log(e)
         await webhookClient.send(`Encountered an error\n${e}`)
     } finally {
-        console.log('closing browser')
         await browser.close()
-        console.log('browser closed')
     }
     setTimeout(() => {
         nvidiaCheck(webhookClient)

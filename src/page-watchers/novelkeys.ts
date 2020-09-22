@@ -25,10 +25,12 @@ export const novelkeysCheck = async (webhookClient: WebhookClient) => {
             return products.sort()
         })
         if (!isEqual(existingProductList, newProductList)) {
+            if (existingProductList.length) {
+                await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.LUKE_ID}> Page change detected <${url}>`, {
+                    files: [await page.screenshot()]
+                })
+            }
             existingProductList = newProductList
-            await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.LUKE_ID}> Page change detected <${url}>`, {
-                files: [await page.screenshot()]
-            })
         }
     } catch (e) {
         console.log(e)
@@ -38,5 +40,5 @@ export const novelkeysCheck = async (webhookClient: WebhookClient) => {
     }
     setTimeout(() => {
         novelkeysCheck(webhookClient)
-    }, 1000 * 60 * 5)
+    }, 1000 * 60)
 }

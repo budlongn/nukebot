@@ -6,7 +6,10 @@ export default (connectionString: string) => {
         mongoose
             .connect(
                 connectionString,
-                { useNewUrlParser: true }
+                {
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true
+                }
             )
             .then(() => {
                 return console.info(`Successfully connected to ${connectionString}`);
