@@ -38,7 +38,7 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
         }
     } catch (e) {
         console.log(e)
-        await webhookClient.send(`Encountered an error\n${e}`)
+        await webhookClient.send(`Nvidia Encountered an error\n${e}`)
     } finally {
         await browser.close()
     }

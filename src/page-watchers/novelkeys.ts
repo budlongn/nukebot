@@ -34,7 +34,7 @@ export const novelkeysCheck = async (webhookClient: WebhookClient) => {
         }
     } catch (e) {
         console.log(e)
-        await webhookClient.send(`Encountered an error\n${e}`)
+        await webhookClient.send(`NovelKeys Encountered an error\n${e}`)
     } finally {
         await browser.close()
     }
