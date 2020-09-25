@@ -52,23 +52,25 @@ async function addSale(args: string[], message: Message) {
         const price = parseInt(await askQuestion('How much is the sale? (numbers only)', message))
         if (isFinite(price)) {
             sale.price = price
+            break; //because if 0 is entered thats a falsy value
         } else {
             await message.channel.send('Invalid Price')
         }
     }
 
     while (!sale.amountCollected) {
-        const price = parseInt(await askQuestion('How much have you collected as a deposit? (numbers only, enter 0 for non)', message))
+        const price = parseInt(await askQuestion('How much have you collected as a deposit? (numbers only, enter 0 for none)', message))
         if (isFinite(price)) {
             sale.amountCollected = price
+            break; //because if 0 is entered thats a falsy value
         } else {
             await message.channel.send('Invalid Price')
         }
     }
 
     try {
-        await Sale.create(sale)
-        await message.channel.send(`Sale created`)
+        const embed = createEmbed(await Sale.create(sale))
+        await message.channel.send(`Sale created`, embed)
     } catch (e) {
         return await message.channel.send(`Error Creating Sale:\n${e}`)
     }
