@@ -1,5 +1,5 @@
-import {Message, MessageCollector, Permissions, TextChannel} from 'discord.js';
-import Raffle from '../types/mongoose/raffle';
+import {Message, MessageCollector, Permissions, TextChannel} from 'discord.js'
+import Raffle from '../types/mongoose/raffle'
 
 export async function endraffle(args: string[], message: Message) {
     if (!message.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -21,6 +21,7 @@ export async function endraffle(args: string[], message: Message) {
                 await currentRaffle.updateOne({
                     endedAt: new Date()
                 })
+                await collector.stop()
                 return await m.channel.send(`Raffle has been ended`)
             } catch (e) {
                 return await message.channel.send(`Error writing to db:\n${e}`)
