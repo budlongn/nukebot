@@ -6,6 +6,7 @@ import {initializeAPIClients} from './config/config'
 import {novelkeysCheck} from './page-watchers/novelkeys'
 import {nvidiaCheck} from './page-watchers/nvidia'
 import connect from './connect'
+import {bestbuyCheck} from './page-watchers/bestbuy'
 
 config()
 const shrugWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
@@ -15,6 +16,7 @@ let cache: string[] = []
 
 novelkeysCheck(shrugWebhookClient)
 nvidiaCheck(shrugWebhookClient)
+bestbuyCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     connect(process.env.MONGO_CONNECTION)

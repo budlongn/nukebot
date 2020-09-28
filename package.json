@@ -21,9 +21,7 @@
     "@types/mongoose": "^5.7.36",
     "@types/node": "^13.9.8",
     "@types/puppeteer": "^3.0.1",
-    "nodemon": "^2.0.2",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "nodemon": "^2.0.2"
   },
   "scripts": {
     "build": "yarn clean && tsc && webpack",

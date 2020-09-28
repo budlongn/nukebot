@@ -2,10 +2,10 @@ import puppeteer from 'puppeteer'
 import {isEqual} from 'lodash'
 import {WebhookClient} from 'discord.js'
 
-let existingProduct: string
+let existingProducts: string[]
 
-export const nvidiaCheck = async (webhookClient: WebhookClient) => {
-    const url = 'https://www.nvidia.com/en-us/shop/geforce/?page=1&limit=9&locale=en-us&search=rtx%203080'
+export const bestbuyCheck = async (webhookClient: WebhookClient) => {
+    const url = 'https://www.bestbuy.com/site/nvidia-geforce-rtx-3080-10gb-gddr6x-pci-express-4-0-graphics-card-titanium-and-black/6429440.p?skuId=6429440'
     const browser = await puppeteer.launch()
     try {
         const page = await browser.newPage()
@@ -17,24 +17,22 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
         await page.goto(url)
         await sleep(5000)
 
-        const newProduct: string = await page.evaluate(() => {
-            let product: string = null
-            document.querySelectorAll('#resultsDiv > div > div').forEach((element) => {
-                const selected = element.querySelector('div.details-col > h2')
-                if (selected.textContent === 'NVIDIA GEFORCE RTX 3080') {
-                    product = element.outerHTML
-                }
-            })
-            return product
+        const newProducts: string[] = await page.evaluate(() => {
+            let productList: string[] = []
+            const elements: HTMLCollectionOf<Element> = document.getElementsByClassName('add-to-cart-button')
+            for (let i = 0; i < elements.length; i++) {
+                productList.push(elements[i].textContent)
+            }
+            return productList
         })
 
-        if (!isEqual(existingProduct, newProduct)) {
-            if (existingProduct) {
+        if (!isEqual(existingProducts, newProducts)) {
+            if (existingProducts) {
                 await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.SANDY_ID}> <@${process.env.HOANG_ID}> Page change detected <${url}>`, {
                     files: [await page.screenshot()]
                 })
             }
-            existingProduct = newProduct
+            existingProducts = newProducts
         }
     } catch (e) {
         console.log(e)
@@ -43,7 +41,7 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
         await browser.close()
     }
     setTimeout(() => {
-        nvidiaCheck(webhookClient)
+        bestbuyCheck(webhookClient)
     }, 1000 * 10)
 }
 
