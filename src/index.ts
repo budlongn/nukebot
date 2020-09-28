@@ -16,7 +16,7 @@ let cache: string[] = []
 
 novelkeysCheck(shrugWebhookClient)
 nvidiaCheck(shrugWebhookClient)
-bestbuyCheck(shrugWebhookClient)
+// bestbuyCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     connect(process.env.MONGO_CONNECTION)
