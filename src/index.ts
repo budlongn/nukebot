@@ -4,7 +4,7 @@ import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
 import {novelkeysCheck} from './page-watchers/novelkeys'
-// import {nvidiaCheck} from './page-watchers/nvidia'
+import {nvidiaCheck} from './page-watchers/nvidia'
 import connect from './connect'
 
 config()
@@ -14,7 +14,7 @@ const prefix = '!'
 let cache: string[] = []
 
 novelkeysCheck(shrugWebhookClient)
-// nvidiaCheck(shrugWebhookClient)
+nvidiaCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     connect(process.env.MONGO_CONNECTION)
