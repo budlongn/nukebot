@@ -1,4 +1,4 @@
-import {Collection, Message, Permissions} from 'discord.js'
+import {Collection, Message, Permissions, TextChannel} from 'discord.js'
 
 export async function clear(args: string[], message: Message) {
     if (!message.member.hasPermission(Permissions.FLAGS.MANAGE_MESSAGES)) {
@@ -15,7 +15,7 @@ export async function clear(args: string[], message: Message) {
     const messages: Collection<string, Message> = await message.channel.messages.fetch({ limit })
     const tempMessage: Message = await message.channel.send('I can\'t leave you idiots alone for 5 minutes')
 
-    await message.channel.bulkDelete(messages, true)
+    await (message.channel as TextChannel).bulkDelete(messages, true)
     setTimeout(async () => {
         await tempMessage.delete()
     }, 5000)
