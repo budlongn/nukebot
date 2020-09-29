@@ -14,7 +14,7 @@ export const nvidiaCheck = async (webhookClient: WebhookClient) => {
             height: 1440
         })
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36')
-        await page.goto(url)
+        await page.goto(url, {waitUntil: 'networkidle0'})
         await sleep(5000)
 
         const newProduct: string = await page.evaluate(() => {
