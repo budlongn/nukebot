@@ -15,7 +15,7 @@ const prefix = '!'
 let cache: string[] = []
 
 novelkeysCheck(shrugWebhookClient)
-// nvidiaCheck(shrugWebhookClient)
+nvidiaCheck(shrugWebhookClient)
 bestbuyCheck(shrugWebhookClient)
 
 client.on('ready', async () => {

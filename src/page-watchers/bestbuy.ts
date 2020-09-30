@@ -21,12 +21,12 @@ export const bestbuyCheck = async (webhookClient: WebhookClient) => {
             return document.getElementsByClassName('add-to-cart-button')[0].textContent
         })
 
-        if (!isEqual(existingProduct, newProduct)) {
-            if (existingProduct) {
+        if (!isEqual('coming soon', newProduct.toLowerCase()) && !isEqual('sold out', newProduct.toLowerCase())) {
+            // if (existingProduct) {
                 await webhookClient.send(`<@${process.env.ME_ID}> <@${process.env.SANDY_ID}> <@${process.env.HOANG_ID}> Page change detected <${url}>`, {
                     files: [await page.screenshot()]
                 })
-            }
+            // }
             existingProduct = newProduct
         }
     } catch (e) {
