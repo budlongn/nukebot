@@ -6,7 +6,7 @@ import {isFinite} from 'lodash'
 import nukebotAPI from '../api/nukebot'
 
 export async function sales(args: string[], message: Message) {
-    const command: string = args.shift().toLowerCase()
+    const command: string = args.length ? args.shift().toLowerCase() : 'list'
 
     switch (command) {
         case 'add':
