@@ -4,7 +4,6 @@ import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
 import {novelkeysCheck} from './page-watchers/novelkeys'
-import {bestbuyCheck} from './page-watchers/bestbuy'
 
 config()
 const shrugWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
@@ -13,7 +12,6 @@ const prefix = '!'
 let cache: string[] = []
 
 novelkeysCheck(shrugWebhookClient)
-bestbuyCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     await initializeAPIClients()
