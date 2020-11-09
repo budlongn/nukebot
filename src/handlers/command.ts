@@ -33,6 +33,6 @@ export async function commandHandler(command: string, args: string[], message: M
         case 'sales':
             return await sales(args, message)
         default:
-            return await message.channel.send('I have no idea what the FUCK you\'re talking about')
+            return
     }
 }
