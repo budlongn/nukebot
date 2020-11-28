@@ -11,7 +11,7 @@ const client = new Client()
 const prefix = '!'
 let cache: string[] = []
 
-novelkeysCheck(shrugWebhookClient)
+// novelkeysCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     await initializeAPIClients()
