@@ -1,5 +1,6 @@
 import axios, {AxiosInstance} from 'axios'
 import {Character, CharacterMedia, Encounters, Item} from '../types/character.Types'
+import {find} from 'lodash'
 
 let apiClient: AxiosInstance
 
@@ -109,9 +110,9 @@ export async function getCharacterMedia(realm: string, name: string): Promise<Ch
             }
         })
         return {
-            avatar_url: data.avatar_url,
-            bust_url: data.bust_url,
-            render_url: data.render_url
+            avatar_url: find(data.assets, (x) => {
+                return x.key === 'avatar'
+            }).value
         }
     } catch (e) {
         console.log(`Blizzard API Error\nStatus Code: ${e.response.status}`)

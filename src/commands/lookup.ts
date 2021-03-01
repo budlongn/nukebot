@@ -20,7 +20,7 @@ export async function lookup(args: string[], message: Message) {
     return await message.channel.send({
         embed: {
             author: {
-                name: `${character.name} - ${character.realm.name.en_US} | ${character.active_spec.name.en_US} ${character.character_class.name.en_US} | ${character.equipped_item_level} ilvl | ${getHeartOfAzerothLevel(character.equipment)} HoA`,
+                name: `${character.name} - ${character.realm.name.en_US} | ${character.covenant_progress.chosen_covenant.name.en_US} ${character.active_spec.name.en_US} ${character.character_class.name.en_US} | ${character.equipped_item_level} ilvl | Renown Level ${character.covenant_progress.renown_level}`,
                 url: `https://worldofwarcraft.com/en-us/character/${args[0]}/${args[1]}`
             },
             thumbnail: {
@@ -51,7 +51,7 @@ function buildRecentRaidList(raids: Encounters[]): string {
         dataString = '**Battle.net API is Down**'
     } else {
         const currentExpansion: Encounters = find(raids, (x: Encounters) => {
-            return x.expansion.id === Expansions.BattleForAzeroth
+            return x.expansion.id === Expansions.Shadowlands
         })
         for (let i: number = currentExpansion.instances.length - 1; i >= 0; i--) {
             const raid: Instance = currentExpansion.instances[i]
@@ -78,12 +78,4 @@ function buildMythicPlusDungeonList(raiderIOData: RaiderIOCharacterData): string
     }
 
     return dataString
-}
-
-function getHeartOfAzerothLevel(items: Item[]) {
-    const hoa: Item = find(items, (x) => {
-        return x.slot.type === 'NECK'
-    })
-
-    return hoa.azerite_details.level.value
 }

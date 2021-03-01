@@ -16,6 +16,14 @@ export interface Character {
     average_item_level: number
     equipped_item_level: number
     media: CharacterMedia
+    covenant_progress: Covenant
+}
+
+export interface Covenant {
+    chosen_covenant: {
+        name: LocalizedNames
+    }
+    renown_level: number
 }
 
 export interface Race {
@@ -201,7 +209,8 @@ export enum Expansions {
     MistsOfPandaria = 74,
     WarlordsOfDraenor = 124,
     Legion = 395,
-    BattleForAzeroth = 396
+    BattleForAzeroth = 396,
+    Shadowlands = 499
 }
 
 //TODO: Clean this up, holy hell
@@ -320,7 +329,7 @@ export interface AzeritePower {
 }
 
 export interface CharacterMedia {
-    avatar_url: string
-    bust_url: string
-    render_url: string
+    avatar_url?: string
+    bust_url?: string
+    render_url?: string
 }
