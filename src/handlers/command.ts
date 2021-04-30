@@ -9,7 +9,8 @@ import {enter} from '../commands/enter'
 import {pickwinner} from '../commands/pickwinner'
 import {endraffle} from '../commands/endraffle'
 import {sales} from '../commands/sales'
-import {userinfo} from "../commands/userinfo";
+import {userinfo} from '../commands/userinfo'
+import {hax} from '../commands/hax'
 
 export async function commandHandler(command: string, args: string[], message: Message) {
     switch (command) {
@@ -35,6 +36,8 @@ export async function commandHandler(command: string, args: string[], message: M
             return await sales(args, message)
         case 'userinfo':
             return await userinfo(args, message)
+        case 'hax':
+            return await hax(message)
         default:
             return
     }
