@@ -11,8 +11,10 @@ import {endraffle} from '../commands/endraffle'
 import {sales} from '../commands/sales'
 import {userinfo} from '../commands/userinfo'
 import {hax} from '../commands/hax'
+import {help} from '../commands/help'
 
 export async function commandHandler(command: string, args: string[], message: Message) {
+    if (command !== 'help' && !message.guild) return
     switch (command) {
         case 'move':
             return await move(args, message)
@@ -38,6 +40,8 @@ export async function commandHandler(command: string, args: string[], message: M
             return await userinfo(args, message)
         case 'hax':
             return await hax(message)
+        case 'help':
+            return await help(message)
         default:
             return
     }
