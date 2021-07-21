@@ -40,7 +40,7 @@ async function addSale(args: string[], message: Message) {
     }
 
     while (!sale.date) {
-        const date = moment.utc(await askQuestion('What day? (MM/DD/YYYY)', message))
+        const date = moment.utc(await askQuestion('What day? (YYYY-MM-DD)', message))
         if (date.isValid()) {
             sale.date = date.toDate()
         } else {
