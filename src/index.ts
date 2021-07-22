@@ -1,11 +1,10 @@
-import {Client, Message, MessageReaction, Permissions, User, WebhookClient} from 'discord.js'
+import {Client, Message, MessageReaction, Permissions, User} from 'discord.js'
 import {commandHandler} from './handlers/command'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
 
 config()
-const shrugWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
 const client = new Client()
 const prefix = '!'
 let cache: string[] = []
@@ -29,7 +28,7 @@ client.on('message', async (message: Message) => {
     if (performGamaAlert && message.author.id === process.env.GAMA_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
         await commandHandler('gamapost', null, message)
     }
-    if (performGamaAlert && message.author.id === process.env.PWN_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
+    if (message.author.id === process.env.PWN_ID && message.channel.id === process.env.ALERT_CHANNEL_ID) {
         await commandHandler('pwnpost', null, message)
     }
 
