@@ -3,15 +3,12 @@ import {commandHandler} from './handlers/command'
 import {config} from 'dotenv-flow'
 import {parseArgs} from './helpers/parsing'
 import {initializeAPIClients} from './config/config'
-import {novelkeysCheck} from './page-watchers/novelkeys'
 
 config()
 const shrugWebhookClient = new WebhookClient(process.env.SHRUG_WEBHOOK_ID, process.env.SHRUG_WEBHOOK_TOKEN)
 const client = new Client()
 const prefix = '!'
 let cache: string[] = []
-
-// novelkeysCheck(shrugWebhookClient)
 
 client.on('ready', async () => {
     await initializeAPIClients()
