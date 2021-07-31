@@ -2,12 +2,13 @@ import axios, {AxiosInstance} from 'axios'
 import {Sale} from '../types/sale'
 import {Raffle} from '../types/raffle'
 import {RaffleEntry} from '../types/raffleentry'
+import {Pwnism} from '../types/pwnism'
 
 let apiClient: AxiosInstance
 
 async function getAuthToken(): Promise<string> {
     try {
-        const {data} = await axios.post(`${process.env.NUKEBOT_API_URL}/users/login`, {
+        const {data} = await axios.post(`${process.env.NUKEBOT_API_URL}/login`, {
             username: process.env.NUKEBOT_API_USER,
             password: process.env.NUKEBOT_API_PASSWORD
         })
@@ -153,6 +154,25 @@ export async function updateRaffle(raffle: Raffle): Promise<Raffle> {
     }
 }
 
+export async function getPwnism(): Promise<Pwnism> {
+    try {
+        const {data} = await apiClient.get<Pwnism>('/pwnism')
+        return data
+    } catch (e) {
+        throw e
+    }
+}
+
+export async function createPwnism(pwnism: string): Promise<Pwnism> {
+    try {
+        const {data} = await apiClient.post<Pwnism>('/pwnism', {quote: pwnism})
+        return data
+    } catch (e) {
+        throw e
+    }
+}
+
+
 export default {
     getSales,
     getSaleById,
@@ -165,5 +185,7 @@ export default {
     createRaffle,
     enterRaffle,
     updateRaffle,
-    getRaffleEntry
+    getRaffleEntry,
+    getPwnism,
+    createPwnism
 }
