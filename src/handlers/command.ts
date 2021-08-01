@@ -13,6 +13,7 @@ import {userinfo} from '../commands/userinfo'
 import {hax} from '../commands/hax'
 import {help} from '../commands/help'
 import {pwnism} from '../commands/pwnism'
+import {assume} from '../commands/assume'
 
 export async function commandHandler(command: string, args: string[], message: Message) {
     if (command !== 'help' && !message.guild) return
@@ -45,6 +46,8 @@ export async function commandHandler(command: string, args: string[], message: M
             return await help(message)
         case 'pwnism':
             return await pwnism(message)
+        case 'assume':
+            return await assume(message)
         default:
             return
     }
